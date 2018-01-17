@@ -1,26 +1,40 @@
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AlphabetSoup {
 
     public AlphabetSoup() {}
 
+    /**
+     * Returns true if the message can be written with the given set of letters
+     * @param message, message to be written
+     * @param letters, set of available letters
+     * @return true if possible, false otherwise
+     */
     public boolean isPossible(String message, String letters) {
-        // sort message
-        String[] sortedMessage = message.split("");
-        Arrays.sort(sortedMessage, String.CASE_INSENSITIVE_ORDER);
 
-        // sort letters
-        String[] sortedLetters = letters.split("");
-        Arrays.sort(sortedLetters, String.CASE_INSENSITIVE_ORDER);
+        // map character frequency
+        Map<Character, Integer> messageMap = new HashMap<Character, Integer>();
 
-        // check
-        int i = 0;
-        for (int j = 0; j < sortedLetters.length; j++) {
-            if (sortedMessage[i].equals(sortedLetters[j])) {
-                if (i == sortedMessage.length - 1) {
-                    return true;
-                } else {
-                    i++;
+        for(int i = 0; i < message.length(); i++) {
+            if(messageMap.containsKey(message.charAt(i))) {
+                messageMap.put(message.charAt(i), messageMap.get(message.charAt(i)) + 1);
+            } else {
+                messageMap.put(message.charAt(i), 1);
+            }
+        }
+
+        // Check
+        int pendingCharacters = messageMap.size();
+
+        for (int j = 0; j < letters.length(); j++) {
+            if (messageMap.containsKey(letters.charAt(j))) {
+                messageMap.put(letters.charAt(j), messageMap.get(letters.charAt(j)) - 1);
+                if (messageMap.get(letters.charAt(j)) == 0) {
+                    pendingCharacters-- ;
+                    if (pendingCharacters == 0) {
+                        return true;
+                    }
                 }
             }
         }
